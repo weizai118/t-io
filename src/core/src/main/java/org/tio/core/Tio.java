@@ -289,15 +289,19 @@ public class Tio {
 		close(channelContext, throwable, remark, false);
 	}
 
+	public static void close(ChannelContext channelContext, Throwable throwable, String remark, boolean isNeedRemove) {
+		close(channelContext, throwable, remark, isNeedRemove, true);
+	}
+
 	/**
-	 *
+	 * 
 	 * @param channelContext
 	 * @param throwable
 	 * @param remark
 	 * @param isNeedRemove
-	 * @author tanyaowu
+	 * @param needCloseLock
 	 */
-	private static void close(ChannelContext channelContext, Throwable throwable, String remark, boolean isNeedRemove) {
+	public static void close(ChannelContext channelContext, Throwable throwable, String remark, boolean isNeedRemove, boolean needCloseLock) {
 		if (channelContext == null) {
 			return;
 		}
@@ -306,13 +310,19 @@ public class Tio {
 			return;
 		}
 
-		WriteLock writeLock = channelContext.closeLock.writeLock();
-		boolean tryLock = writeLock.tryLock();
-		if (!tryLock) {
-			return;
+		WriteLock writeLock = null;
+		if (needCloseLock) {
+			writeLock = channelContext.closeLock.writeLock();
+
+			boolean tryLock = writeLock.tryLock();
+			if (!tryLock) {
+				return;
+			}
+			channelContext.isWaitingClose = true;
+			writeLock.unlock();
+		} else {
+			channelContext.isWaitingClose = true;
 		}
-		channelContext.isWaitingClose = true;
-		writeLock.unlock();
 
 		if (channelContext.asynchronousSocketChannel != null) {
 			try {
@@ -339,7 +349,7 @@ public class Tio {
 				isNeedRemove = true;
 			} else {
 				ClientChannelContext clientChannelContext = (ClientChannelContext) channelContext;
-				if (!ReconnConf.isNeedReconn(clientChannelContext, false)) {
+				if (!ReconnConf.isNeedReconn(clientChannelContext, false)) { //不需要重连
 					isNeedRemove = true;
 				}
 			}
@@ -378,7 +388,6 @@ public class Tio {
 			public void handler(Set<ChannelContext> set) {
 				for (ChannelContext channelContext : set) {
 					Tio.close(channelContext, remark);
-					;
 				}
 			}
 		});
@@ -496,7 +505,7 @@ public class Tio {
 	}
 
 	/**
-	 * 这个方法是给服务器端用的
+	 * 这个方法是给客户器端用的
 	 * @param clientGroupContext
 	 * @param pageIndex
 	 * @param pageSize
@@ -510,12 +519,13 @@ public class Tio {
 	}
 
 	/**
-	 * 
+	 * 这个方法是给客户器端用的
 	 * @param clientGroupContext
 	 * @param pageIndex
 	 * @param pageSize
 	 * @param converter
 	 * @return
+	 * @author tanyaowu
 	 */
 	public static <T> Page<T> getPageOfConnecteds(ClientGroupContext clientGroupContext, Integer pageIndex, Integer pageSize, Converter<T> converter) {
 		SetWithLock<ChannelContext> setWithLock = Tio.getAllConnectedsChannelContexts(clientGroupContext);
@@ -1356,7 +1366,8 @@ public class Tio {
 	 * 注意：<br>
 	 * 1、参数packet的synSeq不为空且大于0（null、等于小于0都不行）<br>
 	 * 2、对端收到此消息后，需要回一条synSeq一样的消息。业务需要在decode()方法中为packet的synSeq赋值<br>
-	 * 3、对于同步发送，框架层面并不会帮应用去调用handler.handler(packet, channelContext)方法，应用需要自己去处理响应的消息包，参考：groupContext.getAioHandler().handler(packet, channelContext);<br>
+	 * 3、对于同步发送，框架层面并不会帮应用去调用handler.handler(packet, channelContext)方法，应用需要自己去处理响应的消息包，
+	 *参考：groupContext.getAioHandler().handler(packet, channelContext);<br>
 	 *
 	 * @param channelContext
 	 * @param packet 业务层必须设置好synSeq字段的值，而且要保证唯一（不能重复）。可以在groupContext范围内用AtomicInteger

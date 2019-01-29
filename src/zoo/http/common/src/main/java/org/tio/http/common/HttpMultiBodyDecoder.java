@@ -250,9 +250,9 @@ public class HttpMultiBodyDecoder {
 				String filename = header.getFilename();
 				if (filename != null)//该字段类型是file
 				{
-					if (!"".equals(filename)) { //
+					if (StrUtil.isNotBlank(filename)) { //
 						UploadFile uploadFile = new UploadFile();
-						uploadFile.setName(filename);
+						uploadFile.setName(filename.replaceAll("%", ""));
 						uploadFile.setData(dst);
 						uploadFile.setSize(dst.length);
 						request.addParam(header.getName(), uploadFile);
@@ -267,6 +267,7 @@ public class HttpMultiBodyDecoder {
 				}
 			}
 		}
+		log.error("文件上传，协议不对，step is null");
 		throw new AioDecodeException("step is null");
 	}
 

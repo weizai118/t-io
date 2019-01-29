@@ -20,9 +20,9 @@ public class TioTools {
 
 	public static void main(String[] args) throws Exception {
 //		changeSiteStyle();//切换网站风格
-//				newProject();  //新工程
+				newProject();  //新工程
 //		rename();
-				tio();         //tio升级
+//				tio();         //tio升级
 //				addBlankFile("F:\\work\\tio-site\\src\\frontend\\web-all\\starter\\src\\main\\resources\\config\\page");
 //		deleteFiles(new String[] { "D:\\work\\tio-im-new", "F:\\gitee\\java" }, new String[] { ".externalToolBuilders" });
 		
@@ -196,13 +196,14 @@ public class TioTools {
 		String[] rootDirStrs = new String[] { "F:\\work\\tio-site", "F:\\work\\nb", "D:\\work\\tio-im", "D:\\svn_nb\\base", "G:\\work", "D:\\work\\dts", "D:\\work\\tio-webpack", "D:\\svn_nb\\nbyb", "D:\\work\\t-io",
 				 "D:\\work\\tio-start", "F:\\gitee", "D:\\work\\tio-im(改名前)", "F:\\work\\nb" };
 		
-		String newversion = "3.2.5.v20190101-RELEASE";
+		String newversion = "3.2.6.v20190110-RELEASE";
 		
 		Map<String, String> old2newStr = new HashMap<>();
 //		Map<String, String> old2newFilename = new HashMap<>();
 
 //		old2newStr.put("3.2.2.v20181122-RELEASE", newversion);
 //		old2newStr.put("3.2.3.v20181212-RELEASE", newversion);
+		old2newStr.put("3.2.5.v20190101-RELEASE", newversion);
 		old2newStr.put("3.2.4.v20181218-RELEASE", newversion);
 		
 		for (String rootDirStr : rootDirStrs) {
@@ -221,17 +222,17 @@ public class TioTools {
 	}
 
 	public static void newProject() {
-		String[] rootDirStrs = new String[] { "D:\\work\\tio-im(改名前)" };
+		String[] rootDirStrs = new String[] { "G:\\svn_nb\\html\\etf" };
 
 		for (String rootDirStr : rootDirStrs) {
 			Map<String, String> old2newStr = new HashMap<>();
 			Map<String, String> old2newFilename = new HashMap<>();
 
-//			String oldName = "live";
-//			String newName = "im";
+			String oldName = "live";
+			String newName = "etf";
 			
-			String oldName = "im";
-			String newName = "live";
+//			String oldName = "im";
+//			String newName = "live";
 			
 			String splitStr = "-";
 			//中划线

@@ -40,24 +40,17 @@ import okhttp3.Response;
  * @author tanyaowu
  */
 public class HttpServerStarter {
-	private static Logger log = LoggerFactory.getLogger(HttpServerStarter.class);
-
-	private HttpConfig httpConfig = null;
-
-	private HttpServerAioHandler httpServerAioHandler = null;
-
-	private HttpServerAioListener httpServerAioListener = null;
-
-	private ServerGroupContext serverGroupContext = null;
-
-	private TioServer tioServer = null;
-
-	private HttpRequestHandler httpRequestHandler;
-
+	private static Logger			log						= LoggerFactory.getLogger(HttpServerStarter.class);
+	private HttpConfig				httpConfig				= null;
+	private HttpServerAioHandler	httpServerAioHandler	= null;
+	private HttpServerAioListener	httpServerAioListener	= null;
+	private ServerGroupContext		serverGroupContext		= null;
+	private TioServer				tioServer				= null;
+	private HttpRequestHandler		httpRequestHandler;
 	/**
 	 * 预访问路径的后缀
 	 */
-	private List<String> preAccessFileType = new ArrayList<>();
+	private List<String>			preAccessFileType		= new ArrayList<>();
 
 	/**
 	 * 
@@ -78,13 +71,13 @@ public class HttpServerStarter {
 	 * @author tanyaowu
 	 */
 	public HttpServerStarter(HttpConfig httpConfig, HttpRequestHandler requestHandler, SynThreadPoolExecutor tioExecutor, ThreadPoolExecutor groupExecutor) {
-//		preAccessFileType.add("css");
-//		preAccessFileType.add("js");
-//		preAccessFileType.add("jsp");
+		//		preAccessFileType.add("css");
+		//		preAccessFileType.add("js");
+		//		preAccessFileType.add("jsp");
 		preAccessFileType.add("html");
 		preAccessFileType.add("ftl");
-//		preAccessFileType.add("xml");
-//		preAccessFileType.add("htm");
+		//		preAccessFileType.add("xml");
+		//		preAccessFileType.add("htm");
 
 		if (tioExecutor == null) {
 			tioExecutor = Threads.getTioExecutor();
@@ -279,7 +272,7 @@ public class HttpServerStarter {
 			log.info("暂时只支持目录形式的预访问");
 			return;
 		}
-		
+
 		String pageRoot = httpConfig.getPageRoot();
 		if (pageRoot == null) {
 			return;
@@ -326,7 +319,7 @@ public class HttpServerStarter {
 		}).start();
 
 	}
-	
+
 	/**
 	 * 预访问第一版功能先上，后面再优化
 	 * 
@@ -368,7 +361,6 @@ public class HttpServerStarter {
 				}
 			});
 
-			
 			File pageRootFile = new File(httpConfig.getPageRoot());
 			String pageRootAbs = pageRootFile.getCanonicalPath();
 			for (File file : files) {
